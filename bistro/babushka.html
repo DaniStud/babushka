@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=
+    , initial-scale=1.0"
+    />
+    <title>Bistro Babushka</title>
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="burg.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&family=Russo+One&display=swap" rel="stylesheet"> 
+  </head>
+  <!-- JavaScript -->
+  <style>
+    section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 5px;
+      padding-top: 4rem;
+    }
+
+
+
+    body {
+      padding: 2rem;
+    }
+
+    article {
+      border-style: solid;
+    }
+    h2 {
+      margin: 1.5rem;
+    }
+
+    p {
+      margin: 1.5rem;
+    }
+
+    img {
+      width: 100%;
+    }
+
+    button {
+      display: flex;
+    }
+
+    /* .valgt {
+      /* background-color: rgb(207, 154, 154); */
+
+    #modal {
+      width: 100vw;
+      height: 100vh;
+      display: fixed;
+      background-color: black;
+      display: none;
+    }
+    #modal article {
+      max-width: 900px;
+      margin: 2rem auto;
+      background-color: blanchedalmond;
+    }
+    /* nav {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      position: sticky;
+    } */
+    nav button {
+      background: transparent;
+      border: none;
+      display: block;
+      min-width: 44px;
+      min-height: 44px;
+      cursor: pointer;
+    }
+    footer {
+      background: #666;
+      color: #ddd;
+    }
+    footer section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 10px;
+    }
+
+    #caviar {
+      background-image: url(caviar.jpg);
+      object-fit: cover;
+      min-height: 50vh;
+     
+      filter: blur(0.3rem);
+    }
+
+    
+  </style>
+  <body>
+    <section>
+      <header>
+        <img src="splash.png" alt="babushka splash" />
+      </header>
+
+    
+    </section>
+
+
+      <button class="toggle-btn">Menu</button>
+     
+      <nav>
+        <button data-kategoti="alt" class="valgt">Alt</button>
+        <button data-kategoti="forretter">Forretter</button>
+        <button data-kategoti="hovedretter">Hovedretter</button>
+        <button data-kategoti="desserter">Desserter</button>
+        <button data-kategoti="drikkevarer">Drikkevarer</button>
+      </nav>
+
+     
+      
+   
+
+    <section>
+      <div id="caviar"></div>
+    </section>
+    
+
+
+    <!-- <h2>Menu</h2> -->
+    <section id="maden">
+      <template>
+        <article>
+          <img src="" alt="" class="billedeurl" />
+          <h2 class="navn"></h2>
+          <p class="kortbeskrivelse"></p>
+          <p class="pris"></p>
+        </article>
+      </template>
+    </section>
+   
+  </body>
+  <script>
+    const url = "https://babushka-dd8a.restdb.io/rest/menu";
+
+    const options = {
+      headers: {
+        "x-apikey": "600ec2fb1346a1524ff12de4",
+      },
+    };
+
+    let json;
+    let myKatogri = "alt";
+
+    const main = document.querySelector("#maden");
+    const template = document.querySelector("template").content;
+    const header = document.querySelector("#what");
+
+    document.addEventListener("DOMContentLoaded", start);
+
+    function start() {
+      console.log("start");
+      const filterKnapper = document.querySelectorAll("nav button");
+      filterKnapper.forEach((knap) =>
+        knap.addEventListener("click", filtrerKategorier)
+      );
+
+      async function henData() {
+        const resspons = await fetch(url, options);
+        json = await resspons.json();
+        vis(json, myKatogri);
+      }
+
+      henData();
+    }
+
+    function filtrerKategorier() {
+      console.log("filtrerKategorier");
+      let klikketPaa = this.dataset.kategoti;
+      console.log("klikketPaa :" + klikketPaa);
+      vis(json, klikketPaa);
+    }
+
+    function vis(json, x) {
+      console.log(json);
+      main.textContent = "";
+
+      json.forEach((retter) => {
+        if (retter.kategori == x || x == "alt") {
+          const klon = template.cloneNode(true);
+
+          klon.querySelector(".billedeurl").src =
+            "images/" + retter.billednavn + "-md.jpg";
+          klon.querySelector(".navn").textContent = retter.navn;
+          klon.querySelector(".kortbeskrivelse").textContent =
+            retter.kortbeskrivelse;
+          klon.querySelector(".pris").textContent = retter.pris;
+          klon.querySelector("article").addEventListener("click", () => {
+            location.href = `index.html?id=${retter._id}`;
+          });
+          main.appendChild(klon);
+        }
+      });
+      console.log(myKatogri);
+    }
+  </script>
+  <footer>
+    <section>
+      <address>
+        Addresse: <br />
+        Babushkavej 21
+        <br />
+        2300 København S
+      </address>
+      <aside>
+        Åbningstider: <br />
+        Mandag - fredag 10:00 - 24:00
+        <br />
+        Lørdag 12:00 - 00:00
+      </aside>
+    </section>
+  </footer>
+  <script src="burgerzito.js"></script>
+</html>
